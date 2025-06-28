@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { User } from "firebase/auth";
 import Navbar from "../components/Navbar";
 import VoiceFormAssistant from "../components/VoiceFormAssistant";
+import RecommendationResults from "../components/RecommendationResultsSimple";
 import indianGeoData from "../../indian_geo.json";
 
 // Type definitions for form data
@@ -493,30 +494,10 @@ const RecommendationPage: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-6">
-                  <FiCheckCircle className="text-green-500 text-6xl" />
-                </div>
-                <h3 className="text-2xl font-bold text-text-primary mb-4">Recommendations Generated!</h3>
-                <p className="text-text-secondary mb-8">
-                  Your crop recommendations have been successfully generated based on your farm data.
-                </p>
-                
-                {recommendations.length > 0 && (
-                  <div className="bg-background-secondary rounded-lg p-6 text-left">
-                    <h4 className="text-lg font-bold text-text-primary mb-4">Your Recommendations:</h4>
-                    <div className="space-y-4">
-                      {recommendations.map((rec, index) => (
-                        <div key={index} className="bg-white rounded-lg p-4 shadow-sm">
-                          <pre className="text-sm text-text-secondary overflow-auto">
-                            {JSON.stringify(rec, null, 2)}
-                          </pre>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <RecommendationResults 
+                recommendations={recommendations}
+                formData={formData}
+              />
             )}
           </div>
         );
