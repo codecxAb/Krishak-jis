@@ -463,7 +463,7 @@ const RecommendationPage: React.FC = () => {
             {!submitted ? (
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-text-primary mb-6">Review & Submit</h3>
-                <p className="text-text-secondary mb-8">
+                <p className="text-base md:text-lg text-text-secondary">
                   Please review your information and click submit to get your crop recommendations.
                 </p>
                 
@@ -524,19 +524,19 @@ const RecommendationPage: React.FC = () => {
       <Navbar user={user} />
       
       <div className="pt-20 pb-12">
-        <div className="container mx-auto px-6 max-w-4xl">
+        <div className="container mx-auto px-2 sm:px-4 md:px-6 max-w-4xl">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-text-primary mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h1 className="text-2xl md:text-4xl font-bold text-text-primary mb-2 md:mb-4">
               Crop Recommendation System
             </h1>
-            <p className="text-lg text-text-secondary">
+            <p className="text-base md:text-lg text-text-secondary">
               Get personalized crop recommendations based on your farm data
             </p>
           </div>
 
           {/* Voice Assistant */}
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <VoiceFormAssistant 
               formData={formData}
               onFormUpdate={handleInputChange}
@@ -547,12 +547,12 @@ const RecommendationPage: React.FC = () => {
           </div>
 
           {/* Progress Steps */}
-          <div className="flex justify-center mb-12">
-            <div className="flex items-center space-x-4">
+          <div className="flex justify-center mb-8 md:mb-12 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center space-x-2 md:space-x-4 min-w-max">
               {steps.map((step, index) => (
                 <div key={index} className="flex items-center">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                    className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
                       index <= currentStep
                         ? "bg-brand-primary text-white"
                         : "bg-gray-200 text-gray-500"
@@ -561,14 +561,14 @@ const RecommendationPage: React.FC = () => {
                     {index + 1}
                   </div>
                   <span
-                    className={`ml-2 text-sm font-medium ${
+                    className={`ml-1 md:ml-2 text-xs md:text-sm font-medium ${
                       index <= currentStep ? "text-brand-primary" : "text-gray-500"
                     }`}
                   >
                     {step}
                   </span>
                   {index < steps.length - 1 && (
-                    <div className="w-16 h-0.5 bg-gray-200 ml-4"></div>
+                    <div className="w-8 md:w-16 h-0.5 bg-gray-200 ml-2 md:ml-4"></div>
                   )}
                 </div>
               ))}
@@ -576,7 +576,7 @@ const RecommendationPage: React.FC = () => {
           </div>
 
           {/* Form Content */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -591,18 +591,18 @@ const RecommendationPage: React.FC = () => {
 
             {/* Navigation Buttons */}
             {currentStep < steps.length - 1 && !submitted && (
-              <div className="flex justify-between mt-8">
+              <div className="flex flex-col md:flex-row justify-between gap-4 mt-8">
                 <button
                   onClick={prevStep}
                   disabled={currentStep === 0}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-6 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-6 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
                 >
                   Previous
                 </button>
                 <button
                   onClick={nextStep}
                   disabled={currentStep === steps.length - 1}
-                  className="bg-brand-primary hover:bg-brand-primary/90 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-brand-primary hover:bg-brand-primary/90 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
                 >
                   Next
                 </button>

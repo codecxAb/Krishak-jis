@@ -428,7 +428,7 @@ export default function Home() {
         </div>
       </MotionSection>
 
-      {/* News & Articles Section */}
+      {/* News & Articles Section
       <MotionSection
         id="news"
         initial="hidden"
@@ -444,7 +444,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Article Card 1 */}
-            <MotionDiv variants={itemVariants} className="bg-background-primary rounded-2xl shadow-soft-md overflow-hidden">
+            {/* <MotionDiv variants={itemVariants} className="bg-background-primary rounded-2xl shadow-soft-md overflow-hidden">
               <img
                 src="https://placehold.co/600x350/EBF4E0/2A6B46?text=Farm+Innovation"
                 alt="Farm Innovation"
@@ -458,9 +458,9 @@ export default function Home() {
                   Read More <ChevronRight className="w-4 h-4 ml-1" />
                 </a>
               </div>
-            </MotionDiv>
+            </MotionDiv> */}
             {/* Article Card 2 */}
-            <MotionDiv variants={itemVariants} className="bg-background-primary rounded-2xl shadow-soft-md overflow-hidden">
+            {/* <MotionDiv variants={itemVariants} className="bg-background-primary rounded-2xl shadow-soft-md overflow-hidden">
               <img
                 src="https://placehold.co/600x350/EBF4E0/2A6B46?text=Crop+Health"
                 alt="Crop Health"
@@ -474,9 +474,9 @@ export default function Home() {
                   Read More <ChevronRight className="w-4 h-4 ml-1" />
                 </a>
               </div>
-            </MotionDiv>
+            </MotionDiv> */}
             {/* Article Card 3 */}
-            <MotionDiv variants={itemVariants} className="bg-background-primary rounded-2xl shadow-soft-md overflow-hidden">
+            {/* <MotionDiv variants={itemVariants} className="bg-background-primary rounded-2xl shadow-soft-md overflow-hidden">
               <img
                 src="https://placehold.co/600x350/EBF4E0/2A6B46?text=Market+Insights"
                 alt="Market Insights"
@@ -493,7 +493,7 @@ export default function Home() {
             </MotionDiv>
           </div>
         </div>
-      </MotionSection>
+      </MotionSection> */} */}
 
 
       {/* CTA Banner: "Top model for agriculture" */}
@@ -531,12 +531,7 @@ export default function Home() {
           {/* Brand Info */}
           <div className="md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
-              <span className="text-brand-primary text-3xl font-extrabold tracking-tight">
-                Krishak
-              </span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-brand-accent">
-                <path fillRule="evenodd" d="M11.54 22.351A2.053 2.053 0 0 0 12 22.5c.534 0 1.05-.188 1.46-.502l6.234-4.707a.514.514 0 0 0 .151-.186.505.505 0 0 0 .093-.284l1.34-9.15a.515.515 0 0 0-.151-.492 45.474 45.474 0 0 0-7.856-5.837.502.502 0 0 0-.647-.091 45.474 45.474 0 0 0-7.856 5.837.515.515 0 0 0-.151.492l1.34 9.15a.505.505 0 0 0 .092.284c.067.1.15.186.23.256l6.235 4.707a2.053 2.053 0 0 0 1.46.502ZM12 18.25a.75.75 0 0 0 .75-.75V8.5a.75.75 0 0 0-1.5 0v9a.75.75 0 0 0 .75.75Z" clipRule="evenodd" />
-              </svg>
+              <img src="/logo1.jpeg" alt="Krishak Logo" className="w-10 h-10 rounded-full" />
             </div>
             <p className="text-text-secondary text-sm leading-relaxed">Empowering farmers with intelligent agricultural solutions for a prosperous future.</p>
           </div>
@@ -574,7 +569,7 @@ export default function Home() {
               </li>
               <li className="flex items-center space-x-2">
                 <Phone className="w-5 h-5 text-brand-primary" />
-                <span>+91 98765 43210</span>
+                <span>+91 123456789</span>
               </li>
               <li className="flex items-start space-x-2">
                 <MapPin className="w-5 h-5 text-brand-primary mt-1" />

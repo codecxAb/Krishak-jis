@@ -117,7 +117,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             </Link>
           )}
           {/* Theme Toggle Button */}
-          <button
+          {/* <button
             onClick={toggleDarkMode}
             aria-label={
               isDarkMode ? "Switch to light mode" : "Switch to dark mode"
@@ -149,7 +149,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
                 </g>
               </svg>
             )}
-          </button>
+          </button> */}
         </div>
 
         {/* Mobile: Avatar/Theme/Menu */}

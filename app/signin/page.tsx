@@ -120,7 +120,7 @@ const LoginPage: React.FC = () => {
               className="w-full bg-white hover:bg-gray-50 text-gray-800 font-semibold py-4 px-6 rounded-xl shadow-2xl transition-all duration-300 relative overflow-hidden flex items-center justify-center gap-3 group border border-white/20"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <FaGoogle className="text-red-500 text-xl relative z-10" />
+              <FaGoogle className="text-green-600 text-xl relative z-10" />
               <span className="text-lg relative z-10">Sign in with Google</span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             </MotionButton>
@@ -138,19 +138,17 @@ const LoginPage: React.FC = () => {
       </div>
 
       {/* Right side - Image with green tint overlay */}
-      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
+      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden rounded-s-4xl">
         <MotionDiv
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8 }}
           className="absolute inset-0"
         >
-          {/* Green filter overlay for better text visibility */}
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/80 via-brand-primary/70 to-brand-primary/60 z-20"></div>
-          
-          {/* Additional darker green overlay for enhanced text contrast */}
-          <div className="absolute inset-0 bg-brand-primary/40 z-21"></div>
-          
+          {/* Softer green blur overlay for better text visibility */}
+          <div className="absolute inset-0 bg-gradient-to-br from-green-900/40 via-green-800/30 to-green-700/20 z-30 backdrop-blur-sm"></div>
+          {/* Lighter dark green overlay for enhanced contrast */}
+          <div className="absolute inset-0 bg-brand-primary/20 z-31"></div>
           {/* Optimized Image with priority loading */}
           <Image
             src="/signin.jpg"
@@ -161,24 +159,22 @@ const LoginPage: React.FC = () => {
             priority
             quality={85}
           />
-
           {/* Content overlay */}
-          <div className="absolute inset-0 z-40 flex flex-col justify-center items-center p-12 text-center">
+          <div className="absolute inset-0 z-40 flex flex-col justify-center items-center p-6 md:p-12 text-center">
             <MotionDiv
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="max-w-lg"
             >
-              <h2 className="text-5xl font-extrabold mb-6 text-white drop-shadow-2xl leading-tight">
+              <h2 className="text-3xl md:text-5xl font-extrabold mb-4 md:mb-6 text-white drop-shadow-2xl leading-tight">
                 Grow Smarter With Data
               </h2>
-              <p className="text-xl text-white/90 mb-10 leading-relaxed drop-shadow-lg">
+              <p className="text-base md:text-xl text-white/90 mb-6 md:mb-10 leading-relaxed drop-shadow-lg">
                 Get personalized crop recommendations based on soil conditions, climate data, and market trends for maximum profitability.
               </p>
-
               {/* Feature highlights */}
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                 {[
                   { icon: "📊", label: "Data-driven", desc: "AI Analytics" },
                   { icon: "🌱", label: "Sustainable", desc: "Eco-friendly" },
@@ -191,20 +187,19 @@ const LoginPage: React.FC = () => {
                     transition={{ duration: 0.6, delay: 0.6 + i * 0.1 }}
                     className="flex flex-col items-center group"
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-3 group-hover:bg-white/30 transition-all duration-300 border border-white/30">
-                      <span className="text-2xl">{item.icon}</span>
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2 md:mb-3 group-hover:bg-white/30 transition-all duration-300 border border-white/30">
+                      <span className="text-xl md:text-2xl">{item.icon}</span>
                     </div>
-                    <span className="text-white font-semibold text-sm mb-1">{item.label}</span>
-                    <span className="text-white/70 text-xs">{item.desc}</span>
+                    <span className="text-white font-semibold text-xs md:text-sm mb-0.5 md:mb-1">{item.label}</span>
+                    <span className="text-white/70 text-[10px] md:text-xs">{item.desc}</span>
                   </MotionDiv>
                 ))}
               </div>
             </MotionDiv>
           </div>
-
           {/* Decorative elements */}
-          <div className="absolute top-10 right-10 w-32 h-32 bg-brand-accent/20 rounded-full blur-3xl z-10"></div>
-          <div className="absolute bottom-10 left-10 w-24 h-24 bg-white/10 rounded-full blur-2xl z-10"></div>
+          <div className="absolute top-6 md:top-10 right-6 md:right-10 w-20 md:w-32 h-20 md:h-32 bg-brand-accent/20 rounded-full blur-2xl md:blur-3xl z-10"></div>
+          <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10 w-16 md:w-24 h-16 md:h-24 bg-white/10 rounded-full blur-xl md:blur-2xl z-10"></div>
         </MotionDiv>
       </div>
     </div>

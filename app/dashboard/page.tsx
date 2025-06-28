@@ -1,11 +1,14 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import axios from "axios";
 import { app } from "../utils/firebase";
 import { useRouter } from "next/navigation";
 import { User } from "firebase/auth";
+import Navbar from "../components/Navbar";
+import Link from "next/link";
 import {
   BarChart,
   Bar,
@@ -13,801 +16,530 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
 } from "recharts";
-import { formatDistanceToNow } from "date-fns";
-import { theme } from "../utils/theme";
-import { motion } from "framer-motion";
-import Navbar from "../components/Navbar";
+import {
+  Calendar,
+  Wheat,
+  Droplets,
+  Thermometer,
+  Award,
+  TrendingUp,
+  MapPin,
+  Clock,
+  DollarSign,
+  Leaf,
+  Sun,
+  CloudRain,
+  BarChart3,
+  PieChart as PieChartIcon,
+  AlertTriangle,
+  CheckCircle,
+  Zap,
+  Users,
+  Target,
+  Activity,
+  ArrowUpRight,
+  ArrowDownRight,
+  TrendingDown,
+  Sprout,
+  FileText,
+  Settings,
+} from "lucide-react";
 
-// Define types for our data
-interface CropRecommendation {
-  Commodity: string;
-  Compatibility: string;
-  Profitability: number;
-  Fertilizer_Cost: number;
-  Corrective_Actions?: {
-    [key: string]: string;
-  };
-  Fertilizer_Adjustments: {
-    "Calcium (Ca)": number;
-    "Nitrogen (N)": number;
-    "Potassium (K)": number;
-    "Magnesium (Mg)": number;
-    "Phosphorus (P)": number;
-  };
+// Register GSAP plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
 }
 
-interface RecommendationResponse {
-  Recommended_Crops: CropRecommendation[];
-}
-
-interface SoilRequest {
-  k: number;
-  n: number;
-  p: number;
-  mg: number;
-  ph: number;
-  state: string;
-  userId: string;
-  calcium: number;
-  district: string;
-  previous_crops: string[];
-}
-
-interface Recommendation {
-  id: string;
-  request: SoilRequest;
-  response: RecommendationResponse;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Colors for the charts
-const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884D8",
-  "#82ca9d",
-];
-const COMPATIBILITY_COLORS = {
-  Best: "#22c55e",
-  Good: "#3b82f6",
-  "Not Best": "#f59e0b",
-  "Not Recommended": "#ef4444",
+// Hardcoded user data for demonstration
+const hardcodedUserData = {
+  name: "Rajesh Kumar",
+  location: "Amritsar, Punjab",
+  farmSize: "15.5 acres",
+  primaryCrop: "Wheat",
+  joinedDate: "March 2023",
+  avatar: "/logo1.jpeg",
+  totalProfit: "₹2,45,000",
+  monthlyGrowth: "+12.5%",
+  cropsGrown: 8,
+  activeSeason: "Rabi",
 };
 
-const Dashboard: React.FC = () => {
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  const [mostRecentRec, setMostRecentRec] = useState<Recommendation | null>(
-    null
-  );
+// Sample data for charts
+const cropYieldData = [
+  { month: "Jan", wheat: 45, rice: 30, corn: 25 },
+  { month: "Feb", wheat: 52, rice: 35, corn: 28 },
+  { month: "Mar", wheat: 48, rice: 32, corn: 30 },
+  { month: "Apr", wheat: 55, rice: 40, corn: 35 },
+  { month: "May", wheat: 60, rice: 45, corn: 40 },
+  { month: "Jun", wheat: 58, rice: 48, corn: 42 },
+];
+
+const soilHealthData = [
+  { name: "Nitrogen", value: 75, color: "#10B981" },
+  { name: "Phosphorus", value: 68, color: "#3B82F6" },
+  { name: "Potassium", value: 82, color: "#8B5CF6" },
+  { name: "pH Level", value: 7.2, color: "#F59E0B" },
+];
+
+const revenueData = [
+  { month: "Jan", revenue: 45000, expenses: 28000 },
+  { month: "Feb", revenue: 52000, expenses: 30000 },
+  { month: "Mar", revenue: 48000, expenses: 29000 },
+  { month: "Apr", revenue: 65000, expenses: 35000 },
+  { month: "May", revenue: 70000, expenses: 38000 },
+  { month: "Jun", revenue: 75000, expenses: 40000 },
+];
+
+const upcomingTasks = [
+  { id: 1, task: "Wheat harvesting", date: "Next week", priority: "high" },
+  { id: 2, task: "Soil testing", date: "In 3 days", priority: "medium" },
+  { id: 3, task: "Irrigation maintenance", date: "Tomorrow", priority: "high" },
+  { id: 4, task: "Fertilizer application", date: "In 5 days", priority: "low" },
+];
+
+const weatherData = [
+  { day: "Mon", temp: 28, humidity: 65 },
+  { day: "Tue", temp: 30, humidity: 70 },
+  { day: "Wed", temp: 32, humidity: 68 },
+  { day: "Thu", temp: 29, humidity: 72 },
+  { day: "Fri", temp: 27, humidity: 75 },
+  { day: "Sat", temp: 31, humidity: 69 },
+  { day: "Sun", temp: 33, humidity: 64 },
+];
+
+const CHART_COLORS = ["#10B981", "#3B82F6", "#8B5CF6", "#F59E0B"];
+
+const DashboardPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [hoveredCrop, setHoveredCrop] = useState<CropRecommendation | null>(
-    null
-  );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const chartsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const auth = getAuth(app);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
       if (!currentUser) {
         router.push("/signin");
       }
     });
+
     return () => unsubscribe();
   }, [auth, router]);
 
   useEffect(() => {
-    const fetchRecommendations = async () => {
-      if (!user?.uid) {
-        console.error("User ID is undefined. Cannot fetch recommendations.");
-        return;
-      }
+    if (!loading && user && containerRef.current) {
+      // GSAP animations
+      const tl = gsap.timeline();
+      
+      // Header animation
+      tl.fromTo(
+        ".hero-section",
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+      );
 
-      try {
-        setLoading(true);
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/getDataDashboard`,
-          {
-            userId: user.uid,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      // Stats cards animation
+      tl.fromTo(
+        ".stats-card",
+        { opacity: 0, y: 30, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+        },
+        "-=0.5"
+      );
 
-        const data = response.data as Recommendation[];
+      // Charts animation
+      tl.fromTo(
+        ".chart-container",
+        { opacity: 0, x: 30 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: "power3.out",
+        },
+        "-=0.3"
+      );
 
-        const sortedData = [...data].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-
-        setRecommendations(sortedData);
-
-        if (sortedData.length > 0) {
-          setMostRecentRec(sortedData[0]);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching recommendations:", error);
-        setLoading(false);
-      }
-    };
-
-    if (user) {
-      fetchRecommendations();
+      // Quick actions animation
+      tl.fromTo(
+        ".quick-action",
+        { opacity: 0, scale: 0.8 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+        },
+        "-=0.4"
+      );
     }
-  }, [user]);
-
-  const formatCropName = (name: string) => {
-    if (name.includes("No Suitable Crop")) {
-      return "No Suitable Crop";
-    }
-    if (name.includes("(AI Recommended)")) {
-      return name.replace(" (AI Recommended)", "");
-    }
-    return name;
-  };
-
-  const prepareChartData = () => {
-    if (!mostRecentRec) return [];
-
-    return mostRecentRec.response.Recommended_Crops.map((crop) => ({
-      name: formatCropName(crop.Commodity),
-      profitability: crop.Profitability,
-      fertilizerCost: crop.Fertilizer_Cost,
-      estimatedProfit: crop.Profitability - crop.Fertilizer_Cost,
-      compatibility: crop.Compatibility,
-    }));
-  };
-
-  const getCompatibilityBadge = (compatibility: string) => {
-    const color =
-      {
-        Best: theme.secondary,
-        Good: theme.accent,
-        "Not Best": "#f59e0b",
-        "Not Recommended": "#ef4444",
-      }[compatibility] || theme.light;
-
-    return (
-      <span
-        className="text-xs font-medium px-2.5 py-0.5 rounded"
-        style={{
-          backgroundColor: color,
-          color: theme.light,
-        }}
-      >
-        {compatibility}
-      </span>
-    );
-  };
-
-  const renderCropDetailCard = (crop: CropRecommendation, index: number) => {
-    return (
-      <div
-        key={`${crop.Commodity}-${index}`}
-        className="border rounded-md p-4 hover:shadow-lg transition-all"
-        style={{
-          backgroundColor: theme.primary,
-          borderColor: `${theme.accent}80`,
-          borderWidth: "2px",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-          height: hoveredCrop === crop ? "auto" : "140px",
-          overflow: "hidden",
-        }}
-        onMouseEnter={() => setHoveredCrop(crop)}
-        onMouseLeave={() => setHoveredCrop(null)}
-      >
-        <div className="flex justify-between">
-          <h4 className="text-md font-medium" style={{ color: theme.light }}>
-            {formatCropName(crop.Commodity)}
-          </h4>
-          {getCompatibilityBadge(crop.Compatibility)}
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-          <div>
-            <p style={{ color: `${theme.light}99` }}>Profitability</p>
-            <p className="font-medium" style={{ color: theme.light }}>
-              ₹{crop.Profitability}
-            </p>
-          </div>
-          <div>
-            <p style={{ color: `${theme.light}99` }}>Fertilizer Cost</p>
-            <p className="font-medium" style={{ color: theme.light }}>
-              ₹{crop.Fertilizer_Cost}
-            </p>
-          </div>
-        </div>
-
-        {/* Fertilizer details shown on hover - directly on the card */}
-        {hoveredCrop === crop && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-4 pt-3"
-            style={{ borderTop: `1px dashed ${theme.light}50` }}
-          >
-            <h5
-              className="text-sm font-medium mb-2"
-              style={{ color: theme.light }}
-            >
-              Fertilizer Adjustments
-            </h5>
-
-            <div className="space-y-1">
-              {crop.Fertilizer_Adjustments &&
-                Object.entries(crop.Fertilizer_Adjustments).map(
-                  ([key, value], idx) => (
-                    <div
-                      key={idx}
-                      className="flex justify-between text-xs py-1"
-                      style={{ borderTop: `1px solid ${theme.light}20` }}
-                    >
-                      <span style={{ color: `${theme.light}CC` }}>{key}</span>
-                      <span
-                        className="font-medium"
-                        style={{ color: theme.light }}
-                      >
-                        {typeof value === "number" ? value : value.toString()}
-                      </span>
-                    </div>
-                  )
-                )}
-
-              {crop.Corrective_Actions &&
-                Object.keys(crop.Corrective_Actions).length > 0 && (
-                  <div
-                    className="mt-3 pt-2"
-                    style={{ borderTop: `1px solid ${theme.light}40` }}
-                  >
-                    <p
-                      className="text-xs font-medium mb-1"
-                      style={{ color: theme.light }}
-                    >
-                      Corrective Actions:
-                    </p>
-                    {Object.entries(crop.Corrective_Actions).map(
-                      ([key, value], idx) => (
-                        <p
-                          key={idx}
-                          className="text-xs mt-1"
-                          style={{ color: `${theme.light}CC` }}
-                        >
-                          <span
-                            className="font-medium"
-                            style={{ color: theme.light }}
-                          >
-                            {key}:
-                          </span>{" "}
-                          {value}
-                        </p>
-                      )
-                    )}
-                  </div>
-                )}
-            </div>
-          </motion.div>
-        )}
-      </div>
-    );
-  };
-
-  const renderHistoryCard = (crop: CropRecommendation, index: number) => {
-    return (
-      <div
-        key={index}
-        className="border-2 rounded-md p-4 hover:shadow-lg transition-all"
-        style={{
-          backgroundColor: theme.primary,
-          borderColor: index === 0 ? "#8AFF8A" : `${theme.light}50`,
-          boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-          height: hoveredCrop === crop ? "auto" : "120px",
-          overflow: "hidden",
-        }}
-        onMouseEnter={() => setHoveredCrop(crop)}
-        onMouseLeave={() => setHoveredCrop(null)}
-      >
-        <div className="flex justify-between items-center">
-          <p className="font-medium" style={{ color: theme.light }}>
-            {formatCropName(crop.Commodity)}
-          </p>
-          {getCompatibilityBadge(crop.Compatibility)}
-        </div>
-
-        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-          <div>
-            <p style={{ color: `${theme.light}90` }}>Profit</p>
-            <p className="font-bold" style={{ color: "#8AFF8A" }}>
-              ₹{crop.Profitability}
-            </p>
-          </div>
-          <div>
-            <p style={{ color: `${theme.light}90` }}>Cost</p>
-            <p className="font-bold" style={{ color: "#FF9A8A" }}>
-              ₹{crop.Fertilizer_Cost}
-            </p>
-          </div>
-        </div>
-
-        {/* Fertilizer details shown on hover - directly on the card */}
-        {hoveredCrop === crop && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-4 pt-3"
-            style={{ borderTop: `1px dashed ${theme.light}50` }}
-          >
-            <h5
-              className="text-sm font-medium mb-2"
-              style={{ color: theme.light }}
-            >
-              Fertilizer Adjustments
-            </h5>
-
-            <div className="space-y-1">
-              {crop.Fertilizer_Adjustments &&
-                Object.entries(crop.Fertilizer_Adjustments).map(
-                  ([key, value], idx) => (
-                    <div
-                      key={idx}
-                      className="flex justify-between text-xs py-1"
-                      style={{ borderTop: `1px solid ${theme.light}20` }}
-                    >
-                      <span style={{ color: `${theme.light}CC` }}>{key}</span>
-                      <span
-                        className="font-medium"
-                        style={{ color: theme.light }}
-                      >
-                        {typeof value === "number" ? value : value.toString()}
-                      </span>
-                    </div>
-                  )
-                )}
-
-              {crop.Corrective_Actions &&
-                Object.keys(crop.Corrective_Actions).length > 0 && (
-                  <div
-                    className="mt-3 pt-2"
-                    style={{ borderTop: `1px solid ${theme.light}40` }}
-                  >
-                    <p
-                      className="text-xs font-medium mb-1"
-                      style={{ color: theme.light }}
-                    >
-                      Corrective Actions:
-                    </p>
-                    {Object.entries(crop.Corrective_Actions).map(
-                      ([key, value], idx) => (
-                        <p
-                          key={idx}
-                          className="text-xs mt-1"
-                          style={{ color: `${theme.light}CC` }}
-                        >
-                          <span
-                            className="font-medium"
-                            style={{ color: theme.light }}
-                          >
-                            {key}:
-                          </span>{" "}
-                          {value}
-                        </p>
-                      )
-                    )}
-                  </div>
-                )}
-            </div>
-          </motion.div>
-        )}
-      </div>
-    );
-  };
+  }, [loading, user]);
 
   if (loading) {
     return (
-      <div
-        className="flex justify-center items-center h-screen"
-        style={{ backgroundColor: theme.primary }}
-      >
-        <div
-          className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"
-          style={{ borderColor: theme.light }}
-        ></div>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
       </div>
     );
   }
 
-  const chartData = prepareChartData();
+  if (!user) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-background-primary text-text-primary">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <Navbar user={user} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-20">
-        {/* Tab Navigation */}
-        <div className="mb-6 border-b border-border">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === "dashboard" ? "border-brand-accent text-brand-accent" : "border-transparent text-text-secondary"}`}
-              onClick={() => setActiveTab("dashboard")}
-            >
-              Dashboard
-            </button>
-            <button
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === "history" ? "border-brand-accent text-brand-accent" : "border-transparent text-text-secondary"}`}
-              onClick={() => setActiveTab("history")}
-            >
-              History
-            </button>
-          </nav>
-        </div>
-
-        {activeTab === "dashboard" ? (
-          <>
-            {recommendations.length === 0 ? (
-              <div className="text-center py-10">
-                <svg
-                  className="mx-auto h-12 w-12"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke={theme.light}
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                <h3
-                  className="mt-2 text-sm font-medium"
-                  style={{ color: theme.light }}
-                >
-                  No recommendations yet
-                </h3>
-                <p
-                  className="mt-1 text-sm"
-                  style={{ color: `${theme.light}CC` }}
-                >
-                  Get started by analyzing your soil data.
-                </p>
+      
+      <div ref={containerRef} className="pt-20 pb-12">
+        <div className="container mx-auto px-6 max-w-7xl">
+          {/* Hero Section */}
+          <div className="hero-section mb-12">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-4 mb-6">
+                <img
+                  src={hardcodedUserData.avatar}
+                  alt="User Avatar"
+                  className="w-20 h-20 rounded-full border-4 border-white shadow-lg"
+                />
+                <div className="text-left">
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                    Welcome back, {hardcodedUserData.name}!
+                  </h1>
+                  <p className="text-lg text-gray-600 flex items-center gap-2 mt-2">
+                    <MapPin className="w-5 h-5" />
+                    {hardcodedUserData.location} • {hardcodedUserData.farmSize}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Member since {hardcodedUserData.joinedDate}
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="space-y-6">
-                {/* Most Recent Recommendation Overview Card */}
-                {mostRecentRec && (
-                  <div
-                    className="overflow-hidden shadow-xl rounded-lg border-2"
-                    style={{
-                      backgroundColor: theme.secondary,
-                      borderColor: theme.accent,
-                    }}
-                  >
-                    <div className="px-5 py-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h2
-                            className="text-xl font-bold"
-                            style={{ color: theme.light }}
-                          >
-                            Latest Recommendation
-                          </h2>
-                          <p style={{ color: theme.light }}>
-                            {new Date(
-                              mostRecentRec.createdAt
-                            ).toLocaleDateString()}{" "}
-                            (
-                            {formatDistanceToNow(
-                              new Date(mostRecentRec.createdAt),
-                              {
-                                addSuffix: true,
-                              }
-                            )}
-                            )
-                          </p>
-                        </div>
-                        <div
-                          className="rounded-md p-3"
-                          style={{ backgroundColor: theme.primary }}
-                        >
-                          <p
-                            className="text-sm font-medium"
-                            style={{ color: theme.light }}
-                          >
-                            <span className="font-bold">Soil pH:</span>{" "}
-                            {mostRecentRec.request.ph}
-                          </p>
-                          <p className="text-sm" style={{ color: theme.light }}>
-                            <span className="font-bold">Location:</span>{" "}
-                            {mostRecentRec.request.district},{" "}
-                            {mostRecentRec.request.state}
-                          </p>
-                        </div>
-                      </div>
+            </div>
 
-                      {/* Display top recommendation */}
-                      <div
-                        className="mt-4 p-4 rounded-lg border border-dashed"
-                        style={{
-                          backgroundColor: theme.accent,
-                          borderColor: theme.light,
-                        }}
-                      >
-                        <h3
-                          className="text-lg font-semibold mb-3"
-                          style={{ color: theme.light }}
-                        >
-                          Top Recommendation
-                        </h3>
-                        {renderCropDetailCard(
-                          mostRecentRec.response.Recommended_Crops[0],
-                          0
-                        )}
-                      </div>
-                    </div>
+            {/* Quick Stats */}
+            <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+              <div className="stats-card bg-white rounded-2xl p-6 shadow-lg border border-green-200 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-green-100 rounded-full">
+                    <DollarSign className="w-8 h-8 text-green-600" />
                   </div>
-                )}
-
-                {/* Charts */}
-                <div className="space-y-4">
-                  <h3
-                    className="text-xl font-bold"
-                    style={{ color: theme.light }}
-                  >
-                    Crop Comparison
-                  </h3>
-                  <div
-                    className="p-5 rounded-lg shadow-lg border-2"
-                    style={{
-                      backgroundColor: theme.secondary,
-                      borderColor: theme.accent,
-                    }}
-                  >
-                    <ResponsiveContainer width="100%" height={350}>
-                      <BarChart
-                        data={chartData}
-                        margin={{
-                          top: 20,
-                          right: 30,
-                          left: 20,
-                          bottom: 70,
-                        }}
-                      >
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke={theme.light}
-                          opacity={0.2}
-                        />
-                        <XAxis
-                          dataKey="name"
-                          stroke={theme.light}
-                          tick={{ fill: theme.light, fontSize: 12 }}
-                          tickFormatter={(value) => {
-                            return value.length > 10
-                              ? value.substring(0, 10) + "..."
-                              : value;
-                          }}
-                          height={60}
-                          angle={-45}
-                          textAnchor="end"
-                        />
-                        <YAxis
-                          stroke={theme.light}
-                          tick={{ fill: theme.light }}
-                          tickFormatter={(value) => `₹${value}`}
-                        />
-                        <Tooltip
-                          cursor={{ fill: `${theme.primary}80` }}
-                          contentStyle={{
-                            backgroundColor: theme.primary,
-                            color: theme.light,
-                            border: `2px solid ${theme.accent}`,
-                            borderRadius: "8px",
-                            boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                          }}
-                          labelStyle={{
-                            color: theme.light,
-                            fontWeight: "bold",
-                            borderBottom: `1px solid ${theme.accent}`,
-                          }}
-                          formatter={(value) => [`₹${value}`, ""]}
-                        />
-                        <Legend
-                          wrapperStyle={{
-                            color: theme.light,
-                            paddingTop: 20,
-                          }}
-                          formatter={(value) => (
-                            <span style={{ color: theme.light, fontSize: 14 }}>
-                              {value}
-                            </span>
-                          )}
-                        />
-                        <Bar
-                          dataKey="profitability"
-                          name="Profitability (₹)"
-                          fill="#8AFF8A"
-                          radius={[4, 4, 0, 0]}
-                        />
-                        <Bar
-                          dataKey="fertilizerCost"
-                          name="Fertilizer Cost (₹)"
-                          fill="#FF9A8A"
-                          radius={[4, 4, 0, 0]}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  {/* Recommended crops list */}
-                  <div
-                    className="border-2 rounded-lg overflow-hidden shadow-lg"
-                    style={{
-                      backgroundColor: theme.secondary,
-                      borderColor: theme.accent,
-                    }}
-                  >
-                    <div
-                      className="px-4 py-3"
-                      style={{
-                        backgroundColor: theme.accent,
-                        color: theme.light,
-                      }}
-                    >
-                      <h4 className="text-md font-medium">
-                        Alternative Recommendations
-                      </h4>
-                    </div>
-                    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {mostRecentRec?.response.Recommended_Crops.slice(1).map(
-                        (crop, index) => renderCropDetailCard(crop, index + 1)
-                      )}
-                    </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Total Profit</p>
+                    <p className="text-2xl font-bold text-gray-800">{hardcodedUserData.totalProfit}</p>
+                    <p className="text-sm text-green-600 flex items-center gap-1">
+                      <ArrowUpRight className="w-4 h-4" />
+                      {hardcodedUserData.monthlyGrowth}
+                    </p>
                   </div>
                 </div>
               </div>
-            )}
-          </>
-        ) : (
-          <div className="space-y-6">
-            <h2
-              className="text-2xl font-bold mb-6"
-              style={{ color: theme.light }}
-            >
-              Recommendation History
-            </h2>
 
-            {recommendations.length === 0 ? (
-              <div
-                className="p-8 rounded-lg text-center"
-                style={{
-                  backgroundColor: `${theme.secondary}50`,
-                  borderColor: theme.light,
-                }}
-              >
-                <svg
-                  className="mx-auto h-12 w-12"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke={theme.light}
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <p className="mt-4 text-lg" style={{ color: theme.light }}>
-                  No recommendation history available.
-                </p>
-              </div>
-            ) : (
-              recommendations.map((rec, recIndex) => (
-                <div
-                  key={rec.id}
-                  className="overflow-hidden rounded-lg shadow-lg border-2 mb-6"
-                  style={{
-                    backgroundColor: theme.secondary,
-                    borderColor: theme.accent,
-                  }}
-                >
-                  <div
-                    className="px-6 py-4 border-b-2"
-                    style={{
-                      backgroundColor: theme.accent,
-                      borderColor: `${theme.light}50`,
-                    }}
-                  >
-                    <div className="flex flex-wrap justify-between items-center">
-                      <div>
-                        <h3
-                          className="text-lg font-semibold"
-                          style={{ color: theme.light }}
-                        >
-                          {formatDistanceToNow(new Date(rec.createdAt), {
-                            addSuffix: true,
-                          })}
-                        </h3>
-                        <p style={{ color: theme.light }}>
-                          {new Date(rec.createdAt).toLocaleDateString()} •{" "}
-                          {rec.request.district}, {rec.request.state}
-                        </p>
-                      </div>
-                      <div className="flex items-center">
-                        <div
-                          className="text-sm rounded-md px-3 py-1 mr-2 border"
-                          style={{
-                            backgroundColor: theme.primary,
-                            borderColor: `${theme.light}50`,
-                          }}
-                        >
-                          <span style={{ color: theme.light }}>
-                            pH: <strong>{rec.request.ph}</strong>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+              <div className="stats-card bg-white rounded-2xl p-6 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-blue-100 rounded-full">
+                    <Wheat className="w-8 h-8 text-blue-600" />
                   </div>
-
-                  <div className="px-6 py-5">
-                    <div className="mb-4">
-                      <h4
-                        className="text-md font-medium mb-2"
-                        style={{ color: theme.light }}
-                      >
-                        Previous crops
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {rec.request.previous_crops.map((crop, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 rounded-full text-xs font-medium"
-                            style={{
-                              backgroundColor: theme.primary,
-                              color: theme.light,
-                              border: `1px solid ${theme.accent}`,
-                            }}
-                          >
-                            {crop}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <h4
-                      className="text-lg font-medium mb-3"
-                      style={{ color: theme.light }}
-                    >
-                      Recommendations
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {rec.response.Recommended_Crops.map((crop, index) =>
-                        renderHistoryCard(crop, index)
-                      )}
-                    </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Primary Crop</p>
+                    <p className="text-2xl font-bold text-gray-800">{hardcodedUserData.primaryCrop}</p>
+                    <p className="text-sm text-blue-600">Active Season: {hardcodedUserData.activeSeason}</p>
                   </div>
                 </div>
-              ))
-            )}
+              </div>
+
+              <div className="stats-card bg-white rounded-2xl p-6 shadow-lg border border-purple-200 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-purple-100 rounded-full">
+                    <Sprout className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Crops Grown</p>
+                    <p className="text-2xl font-bold text-gray-800">{hardcodedUserData.cropsGrown}</p>
+                    <p className="text-sm text-purple-600">This year</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stats-card bg-white rounded-2xl p-6 shadow-lg border border-orange-200 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-orange-100 rounded-full">
+                    <Activity className="w-8 h-8 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Farm Health</p>
+                    <p className="text-2xl font-bold text-gray-800">Excellent</p>
+                    <p className="text-sm text-green-600 flex items-center gap-1">
+                      <CheckCircle className="w-4 h-4" />
+                      All systems good
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-      </main>
+
+          {/* Priority CTA - Get Recommendations */}
+          <div className="mb-12">
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl p-8 text-white shadow-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold mb-2">Ready for your next crop?</h2>
+                  <p className="text-lg opacity-90 mb-4">
+                    Get personalized crop recommendations based on your farm conditions
+                  </p>
+                  <Link href="/recomendation">
+                    <button className="bg-white text-green-600 px-8 py-3 rounded-full font-semibold text-lg hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-lg">
+                      Get Recommendations →
+                    </button>
+                  </Link>
+                </div>
+                <div className="hidden md:block">
+                  <div className="p-6 bg-white/20 rounded-full">
+                    <Target className="w-16 h-16 text-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Charts Grid */}
+          <div ref={chartsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* Crop Yield Chart */}
+            <div className="chart-container bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <BarChart3 className="w-6 h-6 text-green-500" />
+                Crop Yield Trends
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={cropYieldData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="wheat"
+                    stackId="1"
+                    stroke="#10B981"
+                    fill="#10B981"
+                    fillOpacity={0.6}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="rice"
+                    stackId="1"
+                    stroke="#3B82F6"
+                    fill="#3B82F6"
+                    fillOpacity={0.6}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="corn"
+                    stackId="1"
+                    stroke="#8B5CF6"
+                    fill="#8B5CF6"
+                    fillOpacity={0.6}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Revenue Chart */}
+            <div className="chart-container bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <TrendingUp className="w-6 h-6 text-blue-500" />
+                Revenue vs Expenses
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="revenue" fill="#10B981" name="Revenue" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="expenses" fill="#EF4444" name="Expenses" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Soil Health */}
+            <div className="chart-container bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <PieChartIcon className="w-6 h-6 text-purple-500" />
+                Soil Health Metrics
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={soilHealthData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}${name === 'pH Level' ? '' : '%'}`}
+                  >
+                    {soilHealthData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Weather Forecast */}
+            <div className="chart-container bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <Sun className="w-6 h-6 text-yellow-500" />
+                Weather Forecast
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={weatherData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="temp"
+                    stroke="#F59E0B"
+                    strokeWidth={3}
+                    name="Temperature (°C)"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="humidity"
+                    stroke="#3B82F6"
+                    strokeWidth={3}
+                    name="Humidity (%)"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Quick Actions & Tasks */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* Quick Actions */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <Zap className="w-6 h-6 text-yellow-500" />
+                Quick Actions
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Link href="/voice-assistant">
+                  <div className="quick-action p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl hover:shadow-md transition-all duration-300 cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-green-500 rounded-lg group-hover:scale-110 transition-transform">
+                        <Settings className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="font-medium text-green-700">AI Assistant</span>
+                    </div>
+                  </div>
+                </Link>
+
+                <div className="quick-action p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl hover:shadow-md transition-all duration-300 cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-500 rounded-lg group-hover:scale-110 transition-transform">
+                      <Droplets className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="font-medium text-blue-700">Irrigation</span>
+                  </div>
+                </div>
+
+                <div className="quick-action p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:shadow-md transition-all duration-300 cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-500 rounded-lg group-hover:scale-110 transition-transform">
+                      <FileText className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="font-medium text-purple-700">Reports</span>
+                  </div>
+                </div>
+
+                <div className="quick-action p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl hover:shadow-md transition-all duration-300 cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-500 rounded-lg group-hover:scale-110 transition-transform">
+                      <Calendar className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="font-medium text-orange-700">Calendar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Upcoming Tasks */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <Clock className="w-6 h-6 text-blue-500" />
+                Upcoming Tasks
+              </h3>
+              <div className="space-y-4">
+                {upcomingTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-3 h-3 rounded-full ${
+                          task.priority === "high"
+                            ? "bg-red-500"
+                            : task.priority === "medium"
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        }`}
+                      />
+                      <div>
+                        <p className="font-medium text-gray-800">{task.task}</p>
+                        <p className="text-sm text-gray-600">{task.date}</p>
+                      </div>
+                    </div>
+                    <div
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        task.priority === "high"
+                          ? "bg-red-100 text-red-700"
+                          : task.priority === "medium"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {task.priority}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default DashboardPage;
