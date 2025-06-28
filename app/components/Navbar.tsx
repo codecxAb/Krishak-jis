@@ -95,6 +95,12 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
           >
             Recommendations
           </Link>
+          <Link
+            href="/voice-assistant"
+            className="hover:text-brand-accent transition-colors text-lg"
+          >
+            🎤 AI Assistant
+          </Link>
           {user ? (
             <button
               onClick={handleLogout}
@@ -227,6 +233,13 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
                 onClick={toggleMobileMenu}
               >
                 Recommendations
+              </Link>
+              <Link
+                href="/voice-assistant"
+                className="py-3 px-4 rounded-lg hover:bg-brand-accent/10 transition-colors text-text-primary"
+                onClick={toggleMobileMenu}
+              >
+                🎤 AI Assistant
               </Link>
               {user ? (
                 <button

@@ -12,6 +12,7 @@ import { app } from "../utils/firebase";
 import { useRouter } from "next/navigation";
 import { User } from "firebase/auth";
 import Navbar from "../components/Navbar";
+import VoiceFormAssistant from "../components/VoiceFormAssistant";
 
 // Type definitions for form data
 interface FormData {
@@ -502,6 +503,17 @@ const RecommendationPage: React.FC = () => {
             <p className="text-lg text-text-secondary">
               Get personalized crop recommendations based on your farm data
             </p>
+          </div>
+
+          {/* Voice Assistant */}
+          <div className="mb-8">
+            <VoiceFormAssistant 
+              formData={formData}
+              onFormUpdate={handleInputChange}
+              onResponse={(response) => {
+                console.log("Voice Assistant Response:", response);
+              }}
+            />
           </div>
 
           {/* Progress Steps */}

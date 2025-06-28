@@ -12,6 +12,7 @@ import { app } from "../utils/firebase";
 import { useRouter } from "next/navigation";
 import { User } from "firebase/auth";
 import Navbar from "../components/Navbar";
+import VoiceFormAssistant from "../components/VoiceFormAssistant";
 import indianGeoData from "../../indian_geo.json";
 
 // Type definitions for form data
@@ -150,7 +151,7 @@ const RecommendationPage: React.FC = () => {
       console.log("Sending data:", requestData);
 
       // Replace with your actual API endpoint
-      const response = await fetch("https://17e3-45-64-237-226.ngrok-free.app/recommendations", {
+      const response = await fetch("https://2a02-45-64-237-226.ngrok-free.app/recommendations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -233,9 +234,7 @@ const RecommendationPage: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-text-primary font-medium mb-2">
-                  State *
-                </label>
+                <label className="block text-text-primary font-medium mb-2">State *</label>
                 <select
                   value={formData.state}
                   onChange={(e) => handleInputChange("state", e.target.value)}
@@ -250,9 +249,7 @@ const RecommendationPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-text-primary font-medium mb-2">
-                  District *
-                </label>
+                <label className="block text-text-primary font-medium mb-2">District *</label>
                 <select
                   value={formData.district}
                   onChange={(e) => handleInputChange("district", e.target.value)}
@@ -507,105 +504,13 @@ const RecommendationPage: React.FC = () => {
                 
                 {recommendations.length > 0 && (
                   <div className="bg-background-secondary rounded-lg p-6 text-left">
-                    <h4 className="text-lg font-bold text-text-primary mb-4">
-                      Personalized Recommendations for {formData.district}, {formData.state}
-                    </h4>
+                    <h4 className="text-lg font-bold text-text-primary mb-4">Your Recommendations:</h4>
                     <div className="space-y-4">
                       {recommendations.map((rec, index) => (
-                        <div key={index} className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-brand-accent">
-                          {rec.type === 'crop_recommendation' && (
-                            <div>
-                              <h5 className="font-bold text-brand-primary mb-2">🌾 Crop Recommendation</h5>
-                              <div className="space-y-1">
-                                <p><strong>Recommended Crop:</strong> {rec.crop}</p>
-                                <p><strong>Suitability Score:</strong> {(rec.suitability_score * 100).toFixed(0)}%</p>
-                                <p><strong>Expected Yield:</strong> {rec.expected_yield}</p>
-                                <p><strong>Season:</strong> {rec.season}</p>
-                                <p><strong>Reason:</strong> {rec.reason}</p>
-                                {rec.location_advantages && (
-                                  <p><strong>Location Advantages:</strong> {rec.location_advantages}</p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {rec.type === 'alternative_crops' && (
-                            <div>
-                              <h5 className="font-bold text-green-600 mb-2">🌱 Alternative Crops</h5>
-                              <div className="space-y-1">
-                                <p><strong>Crops:</strong> {rec.crops.join(', ')}</p>
-                                <p><strong>Reason:</strong> {rec.reason}</p>
-                                <p><strong>Benefits:</strong> {rec.benefits}</p>
-                              </div>
-                            </div>
-                          )}
-                          {rec.type === 'fertilizer_recommendation' && (
-                            <div>
-                              <h5 className="font-bold text-blue-600 mb-2">🧪 Fertilizer Recommendation</h5>
-                              <div className="space-y-1">
-                                <p><strong>Fertilizer:</strong> {rec.fertilizer}</p>
-                                <p><strong>Quantity:</strong> {rec.quantity}</p>
-                                <p><strong>Application Time:</strong> {rec.application_time}</p>
-                                <p><strong>Reason:</strong> {rec.reason}</p>
-                              </div>
-                            </div>
-                          )}
-                          {rec.type === 'soil_treatment' && (
-                            <div>
-                              <h5 className="font-bold text-orange-600 mb-2">🌍 Soil Treatment</h5>
-                              <div className="space-y-1">
-                                <p><strong>Treatment:</strong> {rec.treatment}</p>
-                                <p><strong>Quantity:</strong> {rec.quantity}</p>
-                                <p><strong>Timing:</strong> {rec.timing}</p>
-                                <p><strong>Reason:</strong> {rec.reason}</p>
-                              </div>
-                            </div>
-                          )}
-                          {rec.type === 'farm_assessment' && (
-                            <div>
-                              <h5 className="font-bold text-purple-600 mb-2">📊 Farm Assessment</h5>
-                              <div className="space-y-2">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                  <div className="bg-blue-50 p-3 rounded">
-                                    <p className="text-sm text-blue-600">Overall Score</p>
-                                    <p className="text-2xl font-bold text-blue-800">{rec.overall_score}/1.0</p>
-                                  </div>
-                                  <div className="bg-green-50 p-3 rounded">
-                                    <p className="text-sm text-green-600">Soil Health</p>
-                                    <p className="text-2xl font-bold text-green-800">{rec.soil_health_score}/1.0</p>
-                                  </div>
-                                  <div className="bg-yellow-50 p-3 rounded">
-                                    <p className="text-sm text-yellow-600">Climate Score</p>
-                                    <p className="text-2xl font-bold text-yellow-800">{rec.climate_suitability}/1.0</p>
-                                  </div>
-                                </div>
-                                <p><strong>Summary:</strong> {rec.summary}</p>
-                                <div>
-                                  <p><strong>Key Strengths:</strong></p>
-                                  <ul className="list-disc list-inside ml-4">
-                                    {rec.key_strengths.map((strength: string, i: number) => (
-                                      <li key={i}>{strength}</li>
-                                    ))}
-                                  </ul>
-                                </div>
-                                <div>
-                                  <p><strong>Areas for Improvement:</strong></p>
-                                  <ul className="list-disc list-inside ml-4">
-                                    {rec.areas_for_improvement.map((area: string, i: number) => (
-                                      <li key={i}>{area}</li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                          {!['crop_recommendation', 'alternative_crops', 'fertilizer_recommendation', 'soil_treatment', 'farm_assessment'].includes(rec.type) && (
-                            <div>
-                              <h5 className="font-bold text-gray-600 mb-2">📋 {rec.type.replace(/_/g, ' ').toUpperCase()}</h5>
-                              <pre className="text-sm text-text-secondary overflow-auto whitespace-pre-wrap">
-                                {JSON.stringify(rec, null, 2)}
-                              </pre>
-                            </div>
-                          )}
+                        <div key={index} className="bg-white rounded-lg p-4 shadow-sm">
+                          <pre className="text-sm text-text-secondary overflow-auto">
+                            {JSON.stringify(rec, null, 2)}
+                          </pre>
                         </div>
                       ))}
                     </div>
@@ -646,6 +551,17 @@ const RecommendationPage: React.FC = () => {
             <p className="text-lg text-text-secondary">
               Get personalized crop recommendations based on your farm data
             </p>
+          </div>
+
+          {/* Voice Assistant */}
+          <div className="mb-8">
+            <VoiceFormAssistant 
+              formData={formData}
+              onFormUpdate={handleInputChange}
+              onResponse={(response) => {
+                console.log("Voice Assistant Response:", response);
+              }}
+            />
           </div>
 
           {/* Progress Steps */}
