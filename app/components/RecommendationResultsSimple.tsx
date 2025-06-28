@@ -121,7 +121,7 @@ const RecommendationResults: React.FC<RecommendationResultsProps> = ({
   ];
 
   return (
-    <div ref={containerRef} className="max-w-7xl mx-auto p-6 space-y-8">
+    <div ref={containerRef} className="mx-auto w-full max-w-7xl p-2 sm:p-4 md:p-6 space-y-8">
       {/* Header with Animation */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-3 mb-4">
@@ -357,54 +357,50 @@ const RecommendationResults: React.FC<RecommendationResultsProps> = ({
         )}
 
         {activeTab === "crops" && (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {cropRecommendations.map((crop, index) => (
               <div
                 key={index}
-                className="recommendation-card bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="recommendation-card bg-gradient-to-br from-brand-primary/10 to-brand-accent/10 border border-brand-primary/10 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-green-100 rounded-full">
-                    <Wheat className="w-6 h-6 text-green-600" />
+                  <div className="p-3 bg-brand-accent/20 rounded-full">
+                    <Wheat className="w-6 h-6 text-brand-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-800">{crop.crop}</h3>
-                    <p className="text-sm text-gray-500">{crop.season}</p>
+                    <h3 className="text-xl font-bold text-brand-primary leading-tight">{crop.crop}</h3>
+                    <p className="text-xs text-brand-accent font-medium uppercase tracking-wide">{crop.season}</p>
                   </div>
                 </div>
-
-                <div className="space-y-4">
+                <div className="space-y-4 flex-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Suitability Score</span>
+                    <span className="text-sm text-text-secondary">Suitability Score</span>
                     <div className="flex items-center gap-2">
-                      <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-20 h-2 bg-brand-accent/20 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-green-500 transition-all duration-1000"
+                          className="h-full bg-brand-primary transition-all duration-1000"
                           style={{ width: `${crop.suitability_score * 100}%` }}
                         />
                       </div>
-                      <span className="font-semibold text-green-600">
+                      <span className="font-semibold text-brand-primary">
                         {Math.round(crop.suitability_score * 100)}%
                       </span>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-blue-500" />
-                    <span className="text-gray-600">Expected Yield:</span>
-                    <span className="font-semibold text-blue-600">{crop.expected_yield}</span>
+                  <div className="flex items-center gap-2 text-sm">
+                    <TrendingUp className="w-4 h-4 text-brand-accent" />
+                    <span className="text-text-secondary">Expected Yield:</span>
+                    <span className="font-semibold text-brand-accent">{crop.expected_yield}</span>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-purple-500" />
-                    <span className="text-gray-600">Location Match:</span>
-                    <span className="font-semibold text-purple-600">
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-4 h-4 text-brand-primary" />
+                    <span className="text-text-secondary">Location Match:</span>
+                    <span className="font-semibold text-brand-primary">
                       {crop.location_advantages}
                     </span>
                   </div>
-
-                  <div className="pt-4 border-t">
-                    <p className="text-sm text-gray-600">{crop.reason}</p>
+                  <div className="pt-4 border-t border-brand-accent/20">
+                    <p className="text-xs text-text-secondary leading-relaxed">{crop.reason}</p>
                   </div>
                 </div>
               </div>
@@ -519,10 +515,10 @@ const RecommendationResults: React.FC<RecommendationResultsProps> = ({
           <DollarSign className="w-5 h-5" />
           Download Report
         </button>
-        <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
+        {/* <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
           <Calendar className="w-5 h-5" />
           Schedule Consultation
-        </button>
+        </button> */}
         <button className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
           <Wheat className="w-5 h-5" />
           Get New Recommendation

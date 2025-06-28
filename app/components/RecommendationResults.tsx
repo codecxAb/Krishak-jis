@@ -598,10 +598,10 @@ const RecommendationResults: React.FC<RecommendationResultsProps> = ({
           <DollarSign className="w-5 h-5" />
           Download Report
         </button>
-        <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
+        {/* <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
           <Calendar className="w-5 h-5" />
           Schedule Consultation
-        </button>
+        </button> */}
         <button className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
           <Wheat className="w-5 h-5" />
           Get New Recommendation

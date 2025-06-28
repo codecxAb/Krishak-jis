@@ -72,20 +72,20 @@ const steps = [
 const RecommendationPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
-    state: "",
-    district: "",
-    farm_size: 0,
-    primary_crop_type: "",
-    irrigation_method: "",
-    nitrogen_level: 0,
-    phosphorus_level: 0,
-    potassium_level: 0,
-    calcium_content: 0,
-    ph_level: 0,
-    soil_type: "",
-    temperature: 0,
-    humidity: 0,
-    water_content: 0,
+    state: "west Bengal",
+    district: "Darjeeling",
+    farm_size: 5,
+    primary_crop_type: "Tea",
+    irrigation_method: "Drip Irrigation",
+    nitrogen_level: 30,
+    phosphorus_level: 20,
+    potassium_level: 25,
+    calcium_content: 15,
+    ph_level: 6.5,
+    soil_type: "Loamy",
+    temperature: 22,
+    humidity: 70,
+    water_content: 43,
   });
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
