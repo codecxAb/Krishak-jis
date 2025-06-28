@@ -151,8 +151,9 @@ const RecommendationPage: React.FC = () => {
 
       console.log("Sending data:", requestData);
 
-      // Replace with your actual API endpoint
-      const response = await fetch("https://2a02-45-64-237-226.ngrok-free.app/recommendations", {
+      // Use the recommendations API URL from environment variables
+      const apiUrl = process.env.NEXT_PUBLIC_RECOMMENDATIONS_API_URL || "https://bba8-45-64-237-226.ngrok-free.app";
+      const response = await fetch(`${apiUrl}/recommendations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
