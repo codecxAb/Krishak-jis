@@ -12,8 +12,8 @@ import { app } from "../utils/firebase";
 import { useRouter } from "next/navigation";
 import { User } from "firebase/auth";
 import Navbar from "../components/Navbar";
-import VoiceFormAssistant from "../components/VoiceFormAssistant";
 import RecommendationResults from "../components/RecommendationResultsSimple";
+import { useLanguage } from "../components/LanguageProvider";
 import indianGeoData from "../../indian_geo.json";
 
 // Type definitions for form data
@@ -70,22 +70,23 @@ const steps = [
 ];
 
 const RecommendationPage: React.FC = () => {
+  const { t, translateDynamic } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
-    state: "west Bengal",
-    district: "Darjeeling",
-    farm_size: 5,
-    primary_crop_type: "Tea",
-    irrigation_method: "Drip Irrigation",
-    nitrogen_level: 30,
-    phosphorus_level: 20,
-    potassium_level: 25,
-    calcium_content: 15,
-    ph_level: 6.5,
-    soil_type: "Loamy",
-    temperature: 22,
-    humidity: 70,
-    water_content: 43,
+    state: "",
+    district: "",
+    farm_size: 0,
+    primary_crop_type: "",
+    irrigation_method: "",
+    nitrogen_level: 0,
+    phosphorus_level: 0,
+    potassium_level: 0,
+    calcium_content: 0,
+    ph_level: 0,
+    soil_type: "",
+    temperature: 0,
+    humidity: 0,
+    water_content: 0,
   });
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -533,17 +534,6 @@ const RecommendationPage: React.FC = () => {
             <p className="text-base md:text-lg text-text-secondary">
               Get personalized crop recommendations based on your farm data
             </p>
-          </div>
-
-          {/* Voice Assistant */}
-          <div className="mb-6 md:mb-8">
-            <VoiceFormAssistant 
-              formData={formData}
-              onFormUpdate={handleInputChange}
-              onResponse={(response) => {
-                console.log("Voice Assistant Response:", response);
-              }}
-            />
           </div>
 
           {/* Progress Steps */}

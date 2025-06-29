@@ -1,7 +1,7 @@
 "use client";
 
 // pages/index.js or components/KrishakLandingPage.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from "next/link"; // Changed from 'next/router'
 import Navbar from "../components/Navbar";
@@ -96,37 +96,7 @@ function ThreeDCard({ children }: { children: React.ReactNode }) {
 }
 
 export default function Home() {
-  // Removed useTranslation and useRouter
-  // const { t } = useTranslation('common'); // 'common' namespace for all text
-  // const router = useRouter();
-  // const { locale } = router;
-
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Toggle dark mode function
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark', !isDarkMode);
-    localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
-  };
-
-  // Load theme preference on mount
-  useEffect(() => {
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-      setIsDarkMode(true);
-    } else {
-      document.documentElement.classList.remove('dark');
-      setIsDarkMode(false);
-    }
-  }, []);
-
-  // Removed handleLanguageChange
-  // const handleLanguageChange = (e) => {
-  //     const newLocale = e.target.value;
-  //     router.push(router.pathname, router.asPath, { locale: newLocale });
-  // };
 
   const MotionDiv: any = motion.div;
   const MotionButton: any = motion.button;
@@ -493,7 +463,7 @@ export default function Home() {
             </MotionDiv>
           </div>
         </div>
-      </MotionSection> */} */}
+      </MotionSection> */}
 
 
       {/* CTA Banner: "Top model for agriculture" */}
@@ -580,7 +550,7 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 border-t border-border-color mt-12 pt-8 text-center text-sm text-text-secondary">
-          <p>© 2024 Krishak. All rights reserved.</p>
+          <p>© 2025 Krishak. All rights reserved.</p>
         </div>
       </footer>
     </div>
